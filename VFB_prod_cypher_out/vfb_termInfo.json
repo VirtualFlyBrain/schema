@@ -1,0 +1,220 @@
+{
+  "$schema": "http://json-schema.org/draft-05/schema#",
+  "description": "VFB Term Information metadata schema.",
+  "definitions": {
+    "core": {
+      "additionalProperties": false,
+      "required": [
+        "short_form",
+        "iri",
+        "label",
+        "types"
+      ],
+      "properties": {
+        "short_form": {
+          "type": "string"
+        },
+        "iri": {
+          "type": "string"
+        },
+        "label": {
+          "description": "rdfs:label",
+          "type": "string"
+        },
+        "description": {
+          "description": "A string describing or defining an entity.",
+          "type": "string"
+        },
+        "comment": {
+          "description": "rdfs:comment",
+          "type": "string"
+        },
+        "types": {
+          "description": "A list of term types, corresponding to neo4j:labels in the VFB production database and to the gross typing system used by VFB: Geppetto.",
+          "type": "array",
+          "items": "string"
+        }
+      }
+    },
+    "image": {
+      "additionalProperties": false,
+      "required": [],
+      "properties": {
+        "image_short_form": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "template": {
+          "type": "string"
+        },
+        "folder": {
+          "type": "string"
+        }
+      }
+    },
+    "xref": {
+      "additionalProperties": false,
+      "required": ["url", "label"],
+      "properties": {
+        "url": {
+          "description": "A URL linking to some third party site.",
+          "type": "string"
+        },
+        "label": {
+          "description": "The label string to use for the link.",
+          "type": "string"
+        },
+        "icon": {
+          "description": "A link to an icon to display for the third party site.",
+          "type": "string"
+        }
+      }
+      }
+    },
+    "dataset": {
+      "additionalProperties": false,
+      "required": [
+        "url",
+        "label"
+      ],
+      "properties": {
+        "url": {
+          "description": "A URL linking to some third party site.",
+          "type": "string"
+        },
+        "label": {
+          "description": "The label string to use for the link.",
+          "type": "string"
+        },
+        "icon": {
+          "description": "A link to an icon to display for the third party site.",
+          "type": "string"
+        },
+        "description": {
+          "description": "A description of the dataset.",
+          "type": "string"
+        }
+      }
+    },
+    "license": {
+      "schema_comment": "re-use core?",
+      "additionalProperties": false,
+      "required": [
+        "url",
+        "label"
+      ],
+      "properties": {
+        "url": {
+          "description": "A URL linking to a license.",
+          "type": "string"
+        },
+        "label": {
+          "description": "The label string to use for the license.",
+          "type": "string"
+        },
+        "icon": {
+          "description": "A link to an icon to display for the license.",
+          "type": "string"
+        },
+        "license_text": {
+          "description": "Text of the license - to be used for bespoke licenses only",
+          "type": "string"
+        },
+        "is_bespoke": {
+          "type": "boolean"
+        }
+      }
+
+    },
+    "dataset_license": {
+      "additionalProperties": false,
+      "required": [],
+      "properties": {
+        "dataset": {
+          "properties": {
+            "dataset": { "$ref" : "#definitions/dataset" },
+            "license": { "$ref" : "#definitions/license" }
+        }
+        }
+      }
+    },
+    "pub": {
+      "additionalProperties": false,
+      "required": [],
+      "schema_comment": "Better to model links as xrefs?",
+      "properties": {
+        "label": {
+          "description": "A FlyBase style miniref, e.g. Ghysen et al., 1986, Rouxs Arch. Dev. Biol. 195(5): 281--289",
+          "type": "string"
+        },
+       "microref": {
+         "description": "A minimal reference text for use in display where space is limited. For single authors: Ghysen, 1998; For multiple authors Ghysen et al., 1986",
+          "type": "string"
+        },
+        "PubMed" : {
+          "type": "integer"
+        },
+        "FlyBase": {
+          "type": "string"
+        },
+        "DOI": {
+          "type": "string"
+        },
+        "ISBN": {
+          "type": "string"
+        }
+    },
+    "synonym": {
+      "additionalProperties": false,
+      "required": [],
+      "properties": {
+        "label": {
+          "description": "label string",
+          "type": "string"
+        },
+        "synonym_scope": {
+          "description": "OBO-style synonym scoping.",
+          "type": "string"
+        },
+        "synonym_type": {
+          "type": "string"
+        },
+        "pubs": {
+          "type": "array",
+          "items": { "$ref" : "#definitions/pub" }
+        }
+      }
+    }
+  },
+  "properties" : {
+    "additionalProperties": false,
+    "required": ["core"],
+    "core": { "type" : "object", "$ref": "#definitions/core" },
+    "images" : {
+      "type": "array",
+      "items": {
+        "$ref": "#definitions/image" }
+    },
+    "xrefs" : {
+      "type": "array",
+      "items": {
+        "$ref": "#definitions/xref" }
+    },
+    "pubs" : {
+      "type": "array",
+      "items" : { "$ref": "#definitions/pub" }
+    },
+    "synonyms" : {
+      "type": "array",
+      "items": {
+        "$ref": "#definitions/synonym" }
+    },
+    "dataset_license" : {
+      "type": "array",
+      "items" : { "$ref": "#definitions/dataset_license" }
+    }
+  }
+}
+
