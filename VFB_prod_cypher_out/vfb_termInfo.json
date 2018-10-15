@@ -3,7 +3,6 @@
   "Title": "VFB Term Information metadata schema.",
   "Description": "A JSON schema for use in the VFB API and as a web-facing intermediate layer between VFB neo4j/OWL endpoints and the web.",
   "name": "vfb_terminfo",
-  "type": "object",
   "definitions": {
     "core": {
       "additionalProperties": false,
@@ -13,6 +12,7 @@
         "label",
         "types"
       ],
+      "type": "object",
       "properties": {
         "short_form": {
           "type": "string"
@@ -35,13 +35,14 @@
         "types": {
           "description": "A list of term types, corresponding to neo4j:labels in the VFB production database and to the gross typing system used by VFB: Geppetto.",
           "type": "array",
-          "items": "string"
+          "items": { "type": "string" }
         }
       }
     },
     "image": {
       "additionalProperties": false,
-      "required": [],
+      "required": ["image_short_form", "label", "template"],
+      "type": "object",
       "properties": {
         "image_short_form": {
           "type": "string"
@@ -54,12 +55,16 @@
         },
         "folder": {
           "type": "string"
+        },
+        "index": {
+          "type": "integer"
         }
       }
     },
     "xref": {
       "additionalProperties": false,
       "required": ["url", "label"],
+      "type": "object",
       "properties": {
         "url": {
           "description": "A URL linking to some third party site.",
@@ -78,6 +83,7 @@
     },
     "dataset": {
       "additionalProperties": false,
+      "type": "object",
       "required": [
         "url",
         "label"
@@ -104,6 +110,7 @@
     "license": {
       "schema_comment": "re-use core?",
       "additionalProperties": false,
+      "type": "object",
       "required": [
         "url",
         "label"
@@ -133,7 +140,8 @@
     },
     "dataset_license": {
       "additionalProperties": false,
-      "required": [],
+      "required": ["dataset", "license"],
+      "type": "object",
       "properties": {
         "dataset": {
           "properties": {
@@ -145,8 +153,9 @@
     },
     "pub": {
       "additionalProperties": false,
-      "required": [],
+      "required": ["label"],
       "schema_comment": "Better to model links as xrefs?",
+      "type": "object",
       "properties": {
         "label": {
           "description": "A FlyBase style miniref, e.g. Ghysen et al., 1986, Rouxs Arch. Dev. Biol. 195(5): 281--289",
@@ -171,7 +180,8 @@
     },
     "synonym": {
       "additionalProperties": false,
-      "required": [],
+      "required": ["label"],
+      "type": "object",
       "properties": {
         "label": {
           "description": "label string",
@@ -191,10 +201,11 @@
       }
     }
   },
+  "additionalProperties": false,
+  "required": ["core"],
+  "type": "object",
   "properties" : {
-    "additionalProperties": false,
-    "required": ["core"],
-    "core": { "type" : "object", "$ref": "#definitions/core" },
+    "core": { "$ref": "#definitions/core" },
     "images" : {
       "type": "array",
       "items": {
