@@ -1,18 +1,12 @@
 {
   "$schema": "http://json-schema.org/draft-05/schema#",
-  "Title": "VFB Term Information metadata schema.",
-  "Description": "A JSON schema for use in the VFB API and as a web-facing intermediate layer between VFB neo4j/OWL endpoints and the web.",
+  "title": "VFB Term Information metadata schema.",
+  "description": "A JSON schema for use in the VFB API and as a web-facing intermediate layer between VFB neo4j/OWL endpoints and the web.",
   "name": "vfb_terminfo",
   "definitions": {
-    "core": {
-      "additionalProperties": false,
-      "required": [
-        "short_form",
-        "iri",
-        "label",
-        "types"
-      ],
+    "minimal_entity_info": {
       "type": "object",
+      "required": ["short_form", "iri", "label", "types"],
       "properties": {
         "short_form": {
           "type": "string"
@@ -24,6 +18,28 @@
           "description": "rdfs:label",
           "type": "string"
         },
+        "types": {
+          "description": "A list of term types, corresponding to neo4j:labels in the VFB production database and to the gross typing system used by VFB: Geppetto.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "term": {
+      "additionalProperties": false,
+      "required": [
+        "core"
+      ],
+      "type": "object",
+      "properties": {
+        "core": {
+          "type": "object",
+          "$ref": {
+            "$ref": "#/definitions/minimal_entity_info"
+          }
+        },
         "description": {
           "description": "A string describing or defining an entity.",
           "type": "string"
@@ -31,20 +47,27 @@
         "comment": {
           "description": "rdfs:comment",
           "type": "string"
+        }
+      }
+    },
+    "rel" : {
+      "type": "object",
+      "properties": {
+        "relation": {
+          "type": "string"
         },
-        "types": {
-          "description": "A list of term types, corresponding to neo4j:labels in the VFB production database and to the gross typing system used by VFB: Geppetto.",
-          "type": "array",
-          "items": { "type": "string" }
+        "object": {
+          "type": "object",
+          "$ref": "#/definitions/minimal_entity_info"
         }
       }
     },
     "image": {
       "additionalProperties": false,
-      "required": ["image_short_form", "label", "template"],
+      "required": ["short_form", "label", "template"],
       "type": "object",
       "properties": {
-        "image_short_form": {
+        "short_form": {
           "type": "string"
         },
         "label": {
@@ -66,43 +89,42 @@
       "required": ["url", "label"],
       "type": "object",
       "properties": {
-        "url": {
+        "link": {
           "description": "A URL linking to some third party site.",
           "type": "string"
-        },
-        "label": {
+          },
+        "link_text": {
           "description": "The label string to use for the link.",
           "type": "string"
-        },
+          },
         "icon": {
           "description": "A link to an icon to display for the third party site.",
           "type": "string"
+          }
+        },
+        "site": {
+          "description": "Minimal information about at third party site",
+          "type": "object",
+          "$ref": { "$ref" : "#/definitions/minimal_entity_info"}
         }
-      }
-      }
-    },
+      },
     "dataset": {
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "url",
-        "label"
+        "core"
       ],
       "properties": {
+        "core": {
+          "type": "object",
+          "$ref": { "$ref" : "#/definitions/minimal_entity_info"}
+        },
         "url": {
           "description": "A URL linking to some third party site.",
           "type": "string"
         },
-        "label": {
-          "description": "The label string to use for the link.",
-          "type": "string"
-        },
         "icon": {
           "description": "A link to an icon to display for the third party site.",
-          "type": "string"
-        },
-        "description": {
-          "description": "A description of the dataset.",
           "type": "string"
         }
       }
@@ -112,16 +134,15 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "url",
-        "label"
+        "core"
       ],
       "properties": {
+        "core": {
+          "type": "object",
+          "$ref": { "$ref" : "#/definitions/minimal_entity_info"}
+        },
         "url": {
           "description": "A URL linking to a license.",
-          "type": "string"
-        },
-        "label": {
-          "description": "The label string to use for the license.",
           "type": "string"
         },
         "icon": {
@@ -145,9 +166,9 @@
       "properties": {
         "dataset": {
           "properties": {
-            "dataset": { "$ref" : "#definitions/dataset" },
-            "license": { "$ref" : "#definitions/license" }
-        }
+            "dataset": { "$ref" : "#/definitions/dataset" },
+            "license": { "$ref" : "#/definitions/license" }
+          }
         }
       }
     },
@@ -157,15 +178,17 @@
       "schema_comment": "Better to model links as xrefs?",
       "type": "object",
       "properties": {
-        "label": {
-          "description": "A FlyBase style miniref, e.g. Ghysen et al., 1986, Rouxs Arch. Dev. Biol. 195(5): 281--289",
+        "core": {
+          "type": "object",
+          "$ref": {
+            "$ref": "#/definitions/minimal_entity_info"
+          }
+        },
+        "microref": {
+          "description": "A minimal reference text for use in display where space is limited. For single authors: Ghysen, 1998; For multiple authors Ghysen et al., 1986",
           "type": "string"
         },
-       "microref": {
-         "description": "A minimal reference text for use in display where space is limited. For single authors: Ghysen, 1998; For multiple authors Ghysen et al., 1986",
-          "type": "string"
-        },
-        "PubMed" : {
+        "PubMed": {
           "type": "integer"
         },
         "FlyBase": {
@@ -177,57 +200,83 @@
         "ISBN": {
           "type": "string"
         }
+      }
     },
     "synonym": {
       "additionalProperties": false,
-      "required": ["label"],
+      "required": [
+        "label"
+      ],
       "type": "object",
       "properties": {
         "label": {
           "description": "label string",
           "type": "string"
         },
-        "synonym_scope": {
+        "scope": {
           "description": "OBO-style synonym scoping.",
           "type": "string"
         },
-        "synonym_type": {
+        "type": {
           "type": "string"
-        },
-        "pubs": {
-          "type": "array",
-          "items": { "$ref" : "#definitions/pub" }
         }
       }
-    }
+    },
+    "pub_syn": {
+        "type": "object",
+        "additional_properties": false,
+        "required": [
+          "relation",
+          "synonym",
+          "pub"
+        ],
+        "properties": {
+          "relation": {
+            "type": "string"
+          },
+          "synonym": {
+            "type": "object",
+            "$ref": "#/definitions/synonym"
+          },
+          "pub": {
+            "type": "object",
+            "$ref": "#/definitions/pub"
+          }
+        }
+      }
   },
   "additionalProperties": false,
-  "required": ["core"],
+  "required": ["term"],
   "type": "object",
   "properties" : {
-    "core": { "$ref": "#definitions/core" },
+    "term": { "$ref": "#/definitions/term" },
     "images" : {
       "type": "array",
       "items": {
-        "$ref": "#definitions/image" }
+        "$ref": "#/definitions/image" }
     },
     "xrefs" : {
       "type": "array",
       "items": {
-        "$ref": "#definitions/xref" }
+        "$ref": "#/definitions/xref" }
     },
-    "pubs" : {
+    "pub_syn" : {
       "type": "array",
-      "items" : { "$ref": "#definitions/pub" }
-    },
-    "synonyms" : {
-      "type": "array",
-      "items": {
-        "$ref": "#definitions/synonym" }
+      "items" : { "$ref": "#/definitions/pub_syn" }
     },
     "dataset_license" : {
       "type": "array",
-      "items" : { "$ref": "#definitions/dataset_license" }
+      "items" : { "$ref": "#/definitions/dataset_license" }
+    },
+    "rels": {
+      "type": "array",
+      "items" : { "$ref": "#/definitions/rel" }
+    },
+    "parents": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/minimal_entity_info"
+      }
     }
   }
 }
