@@ -11,5 +11,5 @@ before_script:
 
 script:
   - cd VFB_neo4j/src
-  - python -m uk.ac.ebi.vfb.neo4j.neo2neo.kb_tests http://kb.p2.virtualflybrain.org "" ""
+  - python -m uk.ac.ebi.vfb.neo4j.neo2neo.kb_tests http://kb.p2.virtualflybrain.org neo4j neo4j
 
