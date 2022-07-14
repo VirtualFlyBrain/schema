@@ -33,7 +33,7 @@ jobs:
       #     output="${output//$'\n'/'%0A'}"
       #     output="${output//$'\r'/'%0D'}"
       #     echo "::set-output name=test-report::$output"
-      - name: dummy step
+      - name: generate-report
         run: |
           echo "::set-output name=test-report::"asd""
       - name: mail report
