@@ -29,6 +29,7 @@ jobs:
           output="${output//$'\r'/'%0D'}"
           echo "::set-output name=test-report::$output"
       - name: mail report
+        if: ${{ failure() }}
         uses: dawidd6/action-send-mail@v2
         with:
           # mail server settings
