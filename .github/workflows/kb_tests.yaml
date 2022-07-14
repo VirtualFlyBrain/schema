@@ -1,0 +1,47 @@
+name: Test KB
+
+# Controls when the action will run.
+on:
+  # Triggers every Monday 8am
+  schedule:
+    - cron: 0 8 * * 1
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  test_kb:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Get VFB_neo4j
+        run: |
+          git clone https://github.com/VirtualFlyBrain/VFB_neo4j.git
+          cd VFB_neo4j
+          git checkout kb_test_fixes
+      - name: kb-tests
+        working-directory: ./VFB_neo4j/src
+        run: |
+          output=$(python -m uk.ac.ebi.vfb.neo4j.neo2neo.kb_tests http://kb.virtualflybrain.org neo4j neo4j)
+          output="${output//'%'/'%25'}"
+          output="${output//$'\n'/'%0A'}"
+          output="${output//$'\r'/'%0D'}"
+          echo "::set-output name=test-report::$output"
+      - name: mail report
+        uses: dawidd6/action-send-mail@v2
+        with:
+          # mail server settings
+          server_address: smtp.gmail.com
+          server_port: 465
+          # user credentials
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          # email subject
+          subject: ${{ github.job }} job of VFB ${{ github.repository }}
+          # email body as text
+          body: ${{steps.kb-tests.outputs.test-report}}
+          # comma-separated string, send email to
+          to: ${{secrets.MAIL_TO}}
+          # from email name
+          from: VFB KB Robot
