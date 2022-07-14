@@ -37,7 +37,7 @@ jobs:
       - name: generate report
         id: generate-report
         run: |
-          echo "::set-output name=test-report::asd
+          echo "::set-output name=test-report::asd"
       - name: mail report
         # if: ${{ failure() }}
         uses: dawidd6/action-send-mail@v2
