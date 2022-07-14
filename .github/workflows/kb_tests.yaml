@@ -20,14 +20,15 @@ jobs:
           git clone https://github.com/VirtualFlyBrain/VFB_neo4j.git
           cd VFB_neo4j
           git checkout kb_test_fixes
-      - name: try
+      - name: test kb
         working-directory: ./VFB_neo4j/src
         run: |
           python -m uk.ac.ebi.vfb.neo4j.neo2neo.kb_tests http://kb.virtualflybrain.org neo4j neo4j
-      - name: kb-tests
+      - name: generate-report
+        if: ${{ failure() }}
         working-directory: ./VFB_neo4j/src
         run: |
-          output=$(python -m uk.ac.ebi.vfb.neo4j.neo2neo.kb_tests http://kb.virtualflybrain.org neo4j neo4j)
+          output=$(python -m uk.ac.ebi.vfb.neo4j.neo2neo.kb_tests http://kb.virtualflybrain.org neo4j neo4j silent_fail)
           output="${output//'%'/'%25'}"
           output="${output//$'\n'/'%0A'}"
           output="${output//$'\r'/'%0D'}"
@@ -45,7 +46,7 @@ jobs:
           # email subject
           subject: ${{ github.job }} job of VFB ${{ github.repository }} failed
           # email body as text
-          body: ${{steps.kb-tests.outputs.test-report}}
+          body: ${{steps.generate-report.outputs.test-report}}
           # comma-separated string, send email to
           to: ${{secrets.MAIL_TO}}
           # from email name
