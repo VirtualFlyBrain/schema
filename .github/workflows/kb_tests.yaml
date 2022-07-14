@@ -20,11 +20,11 @@ jobs:
           git clone https://github.com/VirtualFlyBrain/VFB_neo4j.git
           cd VFB_neo4j
           git checkout kb_test_fixes
-      - name: test kb
+      - name: Test KB
         working-directory: ./VFB_neo4j/src
         run: |
           python -m uk.ac.ebi.vfb.neo4j.neo2neo.kb_tests http://kb.virtualflybrain.org neo4j neo4j
-      - name: generate report
+      - name: Generate report
         id: generate-report
         if: ${{ failure() }}
         working-directory: ./VFB_neo4j/src
@@ -34,7 +34,7 @@ jobs:
           output="${output//$'\n'/'%0A'}"
           output="${output//$'\r'/'%0D'}"
           echo "::set-output name=test-report::$output"
-      - name: mail report
+      - name: Mail report
         if: ${{ failure() }}
         uses: dawidd6/action-send-mail@v2
         with:
