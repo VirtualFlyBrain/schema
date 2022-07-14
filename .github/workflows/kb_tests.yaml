@@ -20,6 +20,10 @@ jobs:
           git clone https://github.com/VirtualFlyBrain/VFB_neo4j.git
           cd VFB_neo4j
           git checkout kb_test_fixes
+      - name: try
+        working-directory: ./VFB_neo4j/src
+        run: |
+          python -m uk.ac.ebi.vfb.neo4j.neo2neo.kb_tests http://kb.virtualflybrain.org neo4j neo4j
       - name: kb-tests
         working-directory: ./VFB_neo4j/src
         run: |
@@ -39,7 +43,7 @@ jobs:
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
           # email subject
-          subject: ${{ github.job }} job of VFB ${{ github.repository }}
+          subject: ${{ github.job }} job of VFB ${{ github.repository }} failed
           # email body as text
           body: ${{steps.kb-tests.outputs.test-report}}
           # comma-separated string, send email to
