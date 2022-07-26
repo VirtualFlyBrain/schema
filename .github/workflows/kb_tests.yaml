@@ -19,7 +19,6 @@ jobs:
         run: |
           git clone https://github.com/VirtualFlyBrain/VFB_neo4j.git
           cd VFB_neo4j
-          git checkout kb_test_fixes
       - name: Test KB
         working-directory: ./VFB_neo4j/src
         run: |
