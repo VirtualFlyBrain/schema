@@ -23,13 +23,13 @@ jobs:
       - name: Test KB
         working-directory: ./VFB_neo4j/src
         run: |
-          python -m uk.ac.ebi.vfb.neo4j.neo2neo.kb_tests http://kb.virtualflybrain.org neo4j neo4j
+          python -m uk.ac.ebi.vfb.neo4j.neo2neo.kb_tests http://kb.virtualflybrain.org neo4j vfb
       - name: Generate report
         id: generate-report
         if: ${{ failure() }}
         working-directory: ./VFB_neo4j/src
         run: |
-          output=$(python -m uk.ac.ebi.vfb.neo4j.neo2neo.kb_tests http://kb.virtualflybrain.org neo4j neo4j silent_fail)
+          output=$(python -m uk.ac.ebi.vfb.neo4j.neo2neo.kb_tests http://kb.virtualflybrain.org neo4j vfb silent_fail)
           output="${output//'%'/'%25'}"
           output="${output//$'\n'/'%0A'}"
           output="${output//$'\r'/'%0D'}"
